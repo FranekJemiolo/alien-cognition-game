@@ -26,7 +26,6 @@ let currentPuzzle: any = null
 let selectedAnswer: SymbolId | null = null
 let showFeedback = false
 let isCorrect = false
-let puzzleIndex = 0
 let replayFrames: any[] = []
 
 // Initialize app
@@ -141,11 +140,12 @@ function animateTransition() {
 
 // Generate new puzzle
 function generateNewPuzzle() {
-  currentPuzzle = generatePuzzle(state.seed, state.level, puzzleIndex)
+  currentPuzzle = generatePuzzle(state.seed, state.level, state.puzzleIndex)
   selectedAnswer = null
   showFeedback = false
   isCorrect = false
-  puzzleIndex++
+  state.puzzleIndex++
+  updateURL()
 }
 
 // Submit answer
@@ -159,7 +159,7 @@ function submitAnswer() {
     state.beliefs,
     correct,
     currentPuzzle.realRules,
-    seededRng(state.seed + puzzleIndex)
+    seededRng(state.seed + state.puzzleIndex)
   )
 
   // Update hallucination level
@@ -168,7 +168,7 @@ function submitAnswer() {
   // Generate hallucinations
   state.hallucinations = generateHallucinations(
     state.seed,
-    puzzleIndex,
+    state.puzzleIndex,
     state.streak,
     state.hallucinationLevel
   )
@@ -190,7 +190,7 @@ function submitAnswer() {
   // Play audio
   if (state.audioEnabled) {
     if (correct) {
-      playStepPulse(audioEngine, puzzleIndex, 1)
+      playStepPulse(audioEngine, state.puzzleIndex, 1)
     } else {
       playHallucination(audioEngine, state.hallucinationLevel)
     }
@@ -200,7 +200,7 @@ function submitAnswer() {
 
   // Record frame
   replayFrames.push(recordFrame(
-    puzzleIndex,
+    state.puzzleIndex,
     currentPuzzle.sequence,
     state.beliefs,
     state.hallucinations,
@@ -209,16 +209,20 @@ function submitAnswer() {
       intensity: state.hallucinationLevel
     }
   ))
+  
+  updateURL()
 
   render()
 
   // Auto-advance after delay
   setTimeout(() => {
     if (correct) {
-      // Check if level complete
-      if (puzzleIndex >= 5) {
+      // Check if level complete (5 puzzles per level)
+      // puzzleIndex was already incremented, so check if it's >= 5
+      if (state.puzzleIndex >= 5) {
         state.level++
-        puzzleIndex = 0
+        state.puzzleIndex = 0
+        updateURL()
         if (state.level >= 5) {
           startTransition(state, 'END')
           animateTransition()
@@ -233,6 +237,7 @@ function submitAnswer() {
     } else {
       // Reset streak on wrong answer
       state.streak.correct = 0
+      updateURL()
       generateNewPuzzle()
       render()
     }
@@ -251,10 +256,14 @@ function shareRun() {
 function restart() {
   const newSeed = Math.floor(Math.random() * 1000000)
   state = createInitialState(newSeed)
-  puzzleIndex = 0
   replayFrames = []
   window.location.hash = encodeState(state)
   render()
+}
+
+// Update URL hash with current state
+function updateURL() {
+  window.location.hash = encodeState(state)
 }
 
 // Start app

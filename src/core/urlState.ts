@@ -25,7 +25,7 @@ export function decodeStreaks(str: string): Streak {
 // Encode full state to URL hash
 export function encodeState(state: AppState): string {
   const beliefsBits = encodeBeliefs(state.beliefs)
-  return `#${base36(state.seed)}.${beliefsBits}.${base36(state.level)}.${base36(state.score)}.${encodeStreaks(state.streak)}${state.isReplay ? '.replay' : ''}`
+  return `#${base36(state.seed)}.${beliefsBits}.${base36(state.level)}.${base36(state.puzzleIndex)}.${base36(state.score)}.${encodeStreaks(state.streak)}${state.isReplay ? '.replay' : ''}`
 }
 
 // Simple belief encoding (bitmask for MVP)
@@ -44,18 +44,20 @@ export function decodeState(hash: string): Partial<AppState> {
   const clean = hash.replace("#", "")
   const parts = clean.split(".")
   
-  if (parts.length < 5) return {}
+  if (parts.length < 6) return {}
   
   const seed = parseBase36(parts[0])
   const beliefsBits = parseBase36(parts[1])
   const level = parseBase36(parts[2])
-  const score = parseBase36(parts[3])
-  const streak = decodeStreaks(parts[4])
+  const puzzleIndex = parseBase36(parts[3])
+  const score = parseBase36(parts[4])
+  const streak = decodeStreaks(parts[5])
   const isReplay = parts.includes("replay")
   
   return {
     seed,
     level,
+    puzzleIndex,
     score,
     streak,
     isReplay,

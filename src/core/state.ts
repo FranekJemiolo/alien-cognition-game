@@ -34,6 +34,7 @@ export type AppState = {
   hallucinationLevel: number
   streak: Streak
   level: number
+  puzzleIndex: number
   score: number
   transition: TransitionState | null
   audioEnabled: boolean
@@ -56,6 +57,7 @@ export function createInitialState(seed: number): AppState {
       bestCorrect: 0
     },
     level: 0,
+    puzzleIndex: 0,
     score: 0,
     transition: null,
     audioEnabled: true,
