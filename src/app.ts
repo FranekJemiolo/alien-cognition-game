@@ -202,7 +202,9 @@ function animateTransition() {
 
 // Generate new puzzle
 function generateNewPuzzle() {
+  console.log('Generating puzzle: level:', state.level, 'puzzleIndex:', state.puzzleIndex)
   currentPuzzle = generatePuzzle(state.seed, state.level, state.puzzleIndex)
+  console.log('Puzzle generated:', currentPuzzle)
   selectedAnswer = null
   showFeedback = false
   isCorrect = false
@@ -211,7 +213,9 @@ function generateNewPuzzle() {
 
 // Submit answer
 function submitAnswer() {
+  console.log('Submit answer called, selectedAnswer:', selectedAnswer)
   const correct = validateAnswer(currentPuzzle, [selectedAnswer!])
+  console.log('Answer correct:', correct)
   isCorrect = correct
   showFeedback = true
 
@@ -225,6 +229,7 @@ function submitAnswer() {
 
   // Increment puzzleIndex after using it
   state.puzzleIndex++
+  console.log('puzzleIndex incremented to:', state.puzzleIndex)
 
   // Update hallucination level
   state.hallucinationLevel = 1 - (state.streak.stability / 10)
@@ -280,21 +285,26 @@ function submitAnswer() {
 
   // Auto-advance after delay
   setTimeout(() => {
+    console.log('Auto-advance timeout, correct:', correct, 'puzzleIndex:', state.puzzleIndex)
     if (correct) {
       // Check if level complete (5 puzzles per level)
       // puzzleIndex was already incremented, so check if it's >= 5
       if (state.puzzleIndex >= 5) {
+        console.log('Level complete, advancing to level', state.level + 1)
         state.level++
         state.puzzleIndex = 0
         updateURL()
         if (state.level >= 5) {
+          console.log('Game complete, transitioning to END')
           startTransition(state, 'END')
           animateTransition()
         } else {
+          console.log('Generating new puzzle for next level')
           generateNewPuzzle()
           render()
         }
       } else {
+        console.log('Generating next puzzle in current level')
         generateNewPuzzle()
         render()
       }
@@ -302,6 +312,7 @@ function submitAnswer() {
       // Reset streak on wrong answer
       state.streak.correct = 0
       updateURL()
+      console.log('Wrong answer, resetting streak and generating new puzzle')
       generateNewPuzzle()
       render()
     }
