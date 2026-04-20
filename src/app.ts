@@ -27,6 +27,7 @@ let selectedAnswer: SymbolId | null = null
 let showFeedback = false
 let isCorrect = false
 let replayFrames: any[] = []
+let showDebug = false
 
 // Initialize app
 export function init() {
@@ -53,6 +54,14 @@ export function init() {
     const urlState = decodeState(window.location.hash)
     if (urlState.seed) {
       Object.assign(state, urlState)
+      render()
+    }
+  })
+
+  // Setup debug toggle
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'd' || e.key === 'D') {
+      showDebug = !showDebug
       render()
     }
   })
@@ -83,6 +92,14 @@ function render() {
   }
 
   app.innerHTML = html
+
+  // Add debug UI if enabled
+  if (showDebug) {
+    const debugPanel = document.createElement('div')
+    debugPanel.className = 'debug-panel'
+    debugPanel.innerHTML = renderDebugUI()
+    app.appendChild(debugPanel)
+  }
 
   // Bind event handlers
   bindHandlers()
@@ -264,6 +281,76 @@ function restart() {
 // Update URL hash with current state
 function updateURL() {
   window.location.hash = encodeState(state)
+}
+
+// Render debug UI
+function renderDebugUI(): string {
+  const activeRules = currentPuzzle?.realRules || []
+  const ruleParams = currentPuzzle?.params || {}
+  
+  return `
+    <div class="debug-panel">
+      <h3>DEBUG UI (Press D to toggle)</h3>
+      
+      <div class="debug-section">
+        <h4>State</h4>
+        <div>Seed: ${state.seed}</div>
+        <div>Level: ${state.level}</div>
+        <div>Puzzle Index: ${state.puzzleIndex}</div>
+        <div>Score: ${state.score}</div>
+        <div>Screen: ${state.screen}</div>
+      </div>
+
+      <div class="debug-section">
+        <h4>Streak</h4>
+        <div>Correct: ${state.streak.correct}</div>
+        <div>Stability: ${state.streak.stability}/10</div>
+        <div>Perception: ${state.streak.perception}/10</div>
+        <div>Best Correct: ${state.streak.bestCorrect}</div>
+      </div>
+
+      <div class="debug-section">
+        <h4>Cognition</h4>
+        <div>Hallucination Level: ${state.hallucinationLevel.toFixed(2)}</div>
+        <div>Audio Enabled: ${state.audioEnabled}</div>
+        <div>Audio Intensity: ${state.audioIntensity}</div>
+      </div>
+
+      ${currentPuzzle ? `
+        <div class="debug-section">
+          <h4>Current Puzzle Rules</h4>
+          ${activeRules.map((rule: any) => `
+            <div class="debug-rule">
+              <strong>${rule.type}</strong>
+              ${Object.entries(ruleParams).map(([key, val]) => `
+                <span class="debug-param">${key}: ${JSON.stringify(val)}</span>
+              `).join('')}
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+
+      <div class="debug-section">
+        <h4>Beliefs (${state.beliefs.length})</h4>
+        ${state.beliefs.length > 0 ? state.beliefs.map((b: any) => `
+          <div class="debug-belief">
+            <span>${b.ruleType}</span>
+            <span>confidence: ${b.confidence.toFixed(2)}</span>
+          </div>
+        `).join('') : '<div>No beliefs yet</div>'}
+      </div>
+
+      <div class="debug-section">
+        <h4>URL State</h4>
+        <code>${encodeState(state)}</code>
+      </div>
+
+      <div class="debug-section">
+        <h4>Replay Frames</h4>
+        <div>${replayFrames.length} frames recorded</div>
+      </div>
+    </div>
+  `
 }
 
 // Start app

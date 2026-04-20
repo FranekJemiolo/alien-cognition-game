@@ -93,4 +93,20 @@
     font-size: 12px;
     padding: 10px;
   }
+
+  /* Debug panel mobile */
+  .debug-panel {
+    width: calc(100% - 20px);
+    right: 10px;
+    left: 10px;
+    font-size: 11px;
+  }
+
+  .debug-panel h3 {
+    font-size: 12px;
+  }
+
+  .debug-panel h4 {
+    font-size: 11px;
+  }
 }

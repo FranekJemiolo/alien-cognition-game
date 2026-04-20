@@ -326,3 +326,77 @@ body {
   80% { transform: translate(2px, -2px); }
   100% { transform: translate(0); }
 }
+
+/* Debug panel */
+.debug-panel {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  width: 350px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid var(--accent-color);
+  padding: 20px;
+  font-size: 12px;
+  z-index: 1000;
+  font-family: 'Courier New', monospace;
+}
+
+.debug-panel h3 {
+  color: var(--accent-color);
+  margin-bottom: 15px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.debug-panel h4 {
+  color: var(--text-color);
+  margin: 15px 0 10px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 5px;
+}
+
+.debug-section {
+  margin-bottom: 15px;
+}
+
+.debug-section > div {
+  margin: 5px 0;
+  line-height: 1.4;
+}
+
+.debug-panel code {
+  display: block;
+  background: rgba(124, 255, 178, 0.1);
+  padding: 8px;
+  word-break: break-all;
+  font-size: 10px;
+  margin-top: 5px;
+}
+
+.debug-rule {
+  background: rgba(124, 255, 178, 0.1);
+  padding: 8px;
+  margin: 5px 0;
+}
+
+.debug-rule strong {
+  display: block;
+  color: var(--accent-color);
+  margin-bottom: 4px;
+}
+
+.debug-param {
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 11px;
+}
+
+.debug-belief {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(124, 255, 178, 0.2);
+}
