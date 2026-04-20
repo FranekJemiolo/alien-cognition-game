@@ -109,4 +109,26 @@
   .debug-panel h4 {
     font-size: 11px;
   }
+
+  /* Guide panel mobile */
+  .guide-panel {
+    width: calc(100% - 20px);
+    right: 10px;
+    left: 10px;
+    bottom: 10px;
+    max-height: 50vh;
+    font-size: 12px;
+  }
+
+  .guide-panel h3 {
+    font-size: 12px;
+  }
+
+  .guide-panel h4 {
+    font-size: 11px;
+  }
+
+  .symbol-legend {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

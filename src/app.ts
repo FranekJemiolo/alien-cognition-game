@@ -28,6 +28,7 @@ let showFeedback = false
 let isCorrect = false
 let replayFrames: any[] = []
 let showDebug = false
+let showGuide = true
 
 // Initialize app
 export function init() {
@@ -62,6 +63,10 @@ export function init() {
   window.addEventListener('keydown', (e) => {
     if (e.key === 'd' || e.key === 'D') {
       showDebug = !showDebug
+      render()
+    }
+    if (e.key === 'h' || e.key === 'H') {
+      showGuide = !showGuide
       render()
     }
   })
@@ -99,6 +104,14 @@ function render() {
     debugPanel.className = 'debug-panel'
     debugPanel.innerHTML = renderDebugUI()
     app.appendChild(debugPanel)
+  }
+
+  // Add guide panel if enabled
+  if (showGuide) {
+    const guidePanel = document.createElement('div')
+    guidePanel.className = 'guide-panel'
+    guidePanel.innerHTML = renderGuideUI()
+    app.appendChild(guidePanel)
   }
 
   // Bind event handlers
@@ -348,6 +361,71 @@ function renderDebugUI(): string {
       <div class="debug-section">
         <h4>Replay Frames</h4>
         <div>${replayFrames.length} frames recorded</div>
+      </div>
+    </div>
+  `
+}
+
+// Render guide UI
+function renderGuideUI(): string {
+  return `
+    <div class="guide-panel">
+      <h3>GUIDE (Press H to toggle)</h3>
+      
+      <div class="guide-section">
+        <h4>How to Play</h4>
+        <p>Decode the alien language by identifying the pattern rules. Each puzzle shows a sequence of symbols—determine what comes next.</p>
+        <p>Select your answer from the 4 choices. Correct answers reinforce your beliefs about the rules.</p>
+      </div>
+
+      <div class="guide-section">
+        <h4>Symbols</h4>
+        <div class="symbol-legend">
+          <div><span class="glyph TRI"></span> Triangle</div>
+          <div><span class="glyph CIRC"></span> Circle</div>
+          <div><span class="glyph SQR"></span> Square</div>
+          <div><span class="glyph DIAM"></span> Diamond</div>
+          <div><span class="glyph STAR"></span> Star</div>
+          <div><span class="glyph AR_L"></span> Left Arrow</div>
+          <div><span class="glyph AR_R"></span> Right Arrow</div>
+        </div>
+      </div>
+
+      <div class="guide-section">
+        <h4>Pattern Rules</h4>
+        <p>Rules transform sequences in various ways:</p>
+        <ul>
+          <li><strong>REPEAT_N</strong>: Symbols repeat N times</li>
+          <li><strong>IGNORE_SYMBOL</strong>: A specific symbol is skipped</li>
+          <li><strong>DIRECTION_FLIP</strong>: Sequence reverses direction</li>
+          <li><strong>ALTERNATION</strong>: Alternates between two patterns</li>
+          <li><strong>SHIFT</strong>: Each symbol shifts to the next in sequence</li>
+          <li><strong>REVERSE</strong>: Entire sequence is reversed</li>
+          <li><strong>DUPLICATE</strong>: Sequence is duplicated</li>
+        </ul>
+      </div>
+
+      <div class="guide-section">
+        <h4>Cognition</h4>
+        <p><strong>Beliefs</strong>: Your hypotheses about which rules are active. High confidence = clearer understanding.</p>
+        <p><strong>Hallucinations</strong>: When your stability is low, you may see distortions in the UI and audio.</p>
+        <p><strong>Streak</strong>: Correct answers build streak. Higher streak = better score multiplier.</p>
+      </div>
+
+      <div class="guide-section">
+        <h4>Scoring</h4>
+        <p>Cognitive Coherence Index = (Solution + Stability + Efficiency + Hallucination Survival) × Streak Multiplier</p>
+      </div>
+
+      <div class="guide-section">
+        <h4>Share Your Run</h4>
+        <p>Your entire game state is encoded in the URL. Share it with others to let them experience your exact cognition run.</p>
+      </div>
+
+      <div class="guide-section">
+        <h4>Keyboard Shortcuts</h4>
+        <p><strong>D</strong> - Toggle debug panel</p>
+        <p><strong>H</strong> - Toggle this guide</p>
       </div>
     </div>
   `

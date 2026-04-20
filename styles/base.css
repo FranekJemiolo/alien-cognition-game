@@ -400,3 +400,76 @@ body {
   padding: 4px 0;
   border-bottom: 1px solid rgba(124, 255, 178, 0.2);
 }
+
+/* Guide panel */
+.guide-panel {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  width: 400px;
+  max-height: 70vh;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid var(--accent-color);
+  padding: 20px;
+  font-size: 13px;
+  z-index: 999;
+  font-family: 'Courier New', monospace;
+}
+
+.guide-panel h3 {
+  color: var(--accent-color);
+  margin-bottom: 15px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.guide-panel h4 {
+  color: var(--text-color);
+  margin: 15px 0 10px 0;
+  font-size: 13px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 5px;
+}
+
+.guide-section {
+  margin-bottom: 15px;
+}
+
+.guide-section p {
+  margin: 8px 0;
+  line-height: 1.5;
+  color: rgba(124, 255, 178, 0.8);
+}
+
+.guide-section ul {
+  margin: 8px 0;
+  padding-left: 20px;
+  line-height: 1.6;
+}
+
+.guide-section li {
+  margin: 4px 0;
+  color: rgba(124, 255, 178, 0.8);
+}
+
+.symbol-legend {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.symbol-legend > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.symbol-legend .glyph {
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  margin: 0;
+}
