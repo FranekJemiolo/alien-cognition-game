@@ -16,7 +16,7 @@ export function renderPuzzleScreen(
         
         <div class="sequence-display">
           ${puzzle.sequence.map((sym) => `
-            <span class="glyph ${sym}">${sym}</span>
+            <span class="glyph ${sym}"></span>
           `).join('')}
           <span class="glyph placeholder">?</span>
         </div>
@@ -27,7 +27,7 @@ export function renderPuzzleScreen(
               class="choice-btn ${selectedAnswer === choice ? 'selected' : ''}"
               data-choice="${choice}"
             >
-              <span class="glyph ${choice}">${choice}</span>
+              <span class="glyph ${choice}"></span>
             </button>
           `).join('')}
         </div>

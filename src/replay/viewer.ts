@@ -19,7 +19,7 @@ export function renderReplayViewer(
       </div>
 
       <div class="sequence replay-sequence">
-        ${frame.sequence.map(s => `<span class="glyph ${s}">${s}</span>`).join(' ')}
+        ${frame.sequence.map(s => `<span class="glyph ${s}"></span>`).join(' ')}
       </div>
 
       <div class="beliefs-display">

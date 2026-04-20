@@ -104,10 +104,78 @@ body {
   height: 50px;
   line-height: 50px;
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 0;
   margin: 5px;
   border: 1px solid var(--border-color);
   background: rgba(124, 255, 178, 0.1);
+  position: relative;
+}
+
+.glyph::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Triangle */
+.glyph.TRI::before {
+  width: 0;
+  height: 0;
+  border-left: 15px solid transparent;
+  border-right: 15px solid transparent;
+  border-bottom: 26px solid var(--accent-color);
+}
+
+/* Circle */
+.glyph.CIRC::before {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--accent-color);
+}
+
+/* Square */
+.glyph.SQR::before {
+  width: 26px;
+  height: 26px;
+  background: var(--accent-color);
+}
+
+/* Diamond */
+.glyph.DIAM::before {
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* Star */
+.glyph.STAR::before {
+  content: '★';
+  font-size: 28px;
+  color: var(--accent-color);
+  line-height: 50px;
+  transform: translate(-50%, -50%);
+}
+
+/* Left Arrow */
+.glyph.AR_L::before {
+  content: '←';
+  font-size: 32px;
+  color: var(--accent-color);
+  line-height: 50px;
+  transform: translate(-50%, -50%);
+}
+
+/* Right Arrow */
+.glyph.AR_R::before {
+  content: '→';
+  font-size: 32px;
+  color: var(--accent-color);
+  line-height: 50px;
+  transform: translate(-50%, -50%);
 }
 
 .sequence {
