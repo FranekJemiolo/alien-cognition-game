@@ -66,6 +66,11 @@ export function init() {
       console.log('Debug panel:', showDebug ? 'ON' : 'OFF')
       render()
     }
+    if (e.key === 'h' || e.key === 'H') {
+      guideExpanded = !guideExpanded
+      console.log('Guide panel:', guideExpanded ? 'ON' : 'OFF')
+      render()
+    }
   })
 }
 
@@ -106,30 +111,38 @@ function render() {
     document.body.appendChild(debugPanel)
   }
 
-  // Always show guide panel
-  const guidePanel = document.createElement('div')
-  guidePanel.className = `guide-panel ${guideExpanded ? 'expanded' : ''}`
-  guidePanel.innerHTML = renderGuideUI()
-  document.body.appendChild(guidePanel)
+  // Show guide panel only when expanded
+  if (guideExpanded) {
+    const guidePanel = document.createElement('div')
+    guidePanel.className = 'guide-panel expanded'
+    guidePanel.innerHTML = renderGuideUI()
+    document.body.appendChild(guidePanel)
 
-  // Bind guide expand/collapse
-  guidePanel.querySelector('.guide-toggle')?.addEventListener('click', () => {
-    guideExpanded = !guideExpanded
-    render()
-  })
+    // Bind guide close button
+    guidePanel.querySelector('.guide-toggle')?.addEventListener('click', () => {
+      guideExpanded = false
+      render()
+    })
+  }
 
-  // Add toggle button for debug only
+  // Add toggle buttons
   const toggleButtons = document.createElement('div')
   toggleButtons.className = 'toggle-buttons'
   toggleButtons.innerHTML = `
     <button id="toggle-debug" class="toggle-btn ${showDebug ? 'active' : ''}" title="Toggle Debug (D)">D</button>
+    <button id="toggle-guide" class="toggle-btn ${guideExpanded ? 'active' : ''}" title="Toggle Guide (H)">H</button>
   `
   document.body.appendChild(toggleButtons)
 
-  // Bind toggle button
+  // Bind toggle buttons
   document.getElementById('toggle-debug')?.addEventListener('click', () => {
     showDebug = !showDebug
     console.log('Debug panel:', showDebug ? 'ON' : 'OFF')
+    render()
+  })
+  document.getElementById('toggle-guide')?.addEventListener('click', () => {
+    guideExpanded = !guideExpanded
+    console.log('Guide panel:', guideExpanded ? 'ON' : 'OFF')
     render()
   })
 
@@ -389,76 +402,64 @@ function renderDebugUI(): string {
 
 // Render guide UI
 function renderGuideUI(): string {
-  if (!guideExpanded) {
-    return `
-      <div class="guide-panel">
-        <button class="guide-toggle">?</button>
-        <div class="guide-summary">
-          <span>Decode the alien language</span>
-        </div>
-      </div>
-    `
-  }
-
   return `
-    <div class="guide-panel expanded">
-      <button class="guide-toggle">✕</button>
-      <h3>GUIDE</h3>
-      
-      <div class="guide-section">
-        <h4>How to Play</h4>
-        <p>Decode the alien language by identifying the pattern rules. Each puzzle shows a sequence of symbols—determine what comes next.</p>
-        <p>Select your answer from the 4 choices. Correct answers reinforce your beliefs about the rules.</p>
-      </div>
+    <button class="guide-toggle">✕</button>
+    <h3>GUIDE</h3>
+    
+    <div class="guide-section">
+      <h4>How to Play</h4>
+      <p>Decode the alien language by identifying the pattern rules. Each puzzle shows a sequence of symbols—determine what comes next.</p>
+      <p>Select your answer from the 4 choices. Correct answers reinforce your beliefs about the rules.</p>
+    </div>
 
-      <div class="guide-section">
-        <h4>Symbols</h4>
-        <div class="symbol-legend">
-          <div><span class="glyph TRI">▲</span> Triangle</div>
-          <div><span class="glyph CIRC">●</span> Circle</div>
-          <div><span class="glyph SQR">■</span> Square</div>
-          <div><span class="glyph DIAM">◆</span> Diamond</div>
-          <div><span class="glyph STAR">★</span> Star</div>
-          <div><span class="glyph AR_L">←</span> Left Arrow</div>
-          <div><span class="glyph AR_R">→</span> Right Arrow</div>
-        </div>
+    <div class="guide-section">
+      <h4>Symbols</h4>
+      <div class="symbol-legend">
+        <div><span class="glyph TRI">▲</span> Triangle</div>
+        <div><span class="glyph CIRC">●</span> Circle</div>
+        <div><span class="glyph SQR">■</span> Square</div>
+        <div><span class="glyph DIAM">◆</span> Diamond</div>
+        <div><span class="glyph STAR">★</span> Star</div>
+        <div><span class="glyph AR_L">←</span> Left Arrow</div>
+        <div><span class="glyph AR_R">→</span> Right Arrow</div>
       </div>
+    </div>
 
-      <div class="guide-section">
-        <h4>Pattern Rules</h4>
-        <p>Rules transform sequences in various ways:</p>
-        <ul>
-          <li><strong>REPEAT_N</strong>: Symbols repeat N times</li>
-          <li><strong>IGNORE_SYMBOL</strong>: A specific symbol is skipped</li>
-          <li><strong>DIRECTION_FLIP</strong>: Sequence reverses direction</li>
-          <li><strong>ALTERNATION</strong>: Alternates between two patterns</li>
-          <li><strong>SHIFT</strong>: Each symbol shifts to the next in sequence</li>
-          <li><strong>REVERSE</strong>: Entire sequence is reversed</li>
-          <li><strong>DUPLICATE</strong>: Sequence is duplicated</li>
-        </ul>
-      </div>
+    <div class="guide-section">
+      <h4>Pattern Rules</h4>
+      <p>Rules transform sequences in various ways:</p>
+      <ul>
+        <li><strong>REPEAT_N</strong>: Symbols repeat N times</li>
+        <li><strong>IGNORE_SYMBOL</strong>: A specific symbol is skipped</li>
+        <li><strong>DIRECTION_FLIP</strong>: Sequence reverses direction</li>
+        <li><strong>ALTERNATION</strong>: Alternates between two patterns</li>
+        <li><strong>SHIFT</strong>: Each symbol shifts to the next in sequence</li>
+        <li><strong>REVERSE</strong>: Entire sequence is reversed</li>
+        <li><strong>DUPLICATE</strong>: Sequence is duplicated</li>
+      </ul>
+    </div>
 
-      <div class="guide-section">
-        <h4>Cognition</h4>
-        <p><strong>Beliefs</strong>: Your hypotheses about which rules are active. High confidence = clearer understanding.</p>
-        <p><strong>Hallucinations</strong>: When your stability is low, you may see distortions in the UI and audio.</p>
-        <p><strong>Streak</strong>: Correct answers build streak. Higher streak = better score multiplier.</p>
-      </div>
+    <div class="guide-section">
+      <h4>Cognition</h4>
+      <p><strong>Beliefs</strong>: Your hypotheses about which rules are active. High confidence = clearer understanding.</p>
+      <p><strong>Hallucinations</strong>: When your stability is low, you may see distortions in the UI and audio.</p>
+      <p><strong>Streak</strong>: Correct answers build streak. Higher streak = better score multiplier.</p>
+    </div>
 
-      <div class="guide-section">
-        <h4>Scoring</h4>
-        <p>Cognitive Coherence Index = (Solution + Stability + Efficiency + Hallucination Survival) × Streak Multiplier</p>
-      </div>
+    <div class="guide-section">
+      <h4>Scoring</h4>
+      <p>Cognitive Coherence Index = (Solution + Stability + Efficiency + Hallucination Survival) × Streak Multiplier</p>
+    </div>
 
-      <div class="guide-section">
-        <h4>Share Your Run</h4>
-        <p>Your entire game state is encoded in the URL. Share it with others to let them experience your exact cognition run.</p>
-      </div>
+    <div class="guide-section">
+      <h4>Share Your Run</h4>
+      <p>Your entire game state is encoded in the URL. Share it with others to let them experience your exact cognition run.</p>
+    </div>
 
-      <div class="guide-section">
-        <h4>Keyboard Shortcuts</h4>
-        <p><strong>D</strong> - Toggle debug panel</p>
-      </div>
+    <div class="guide-section">
+      <h4>Keyboard Shortcuts</h4>
+      <p><strong>D</strong> - Toggle debug panel</p>
+      <p><strong>H</strong> - Toggle this guide</p>
     </div>
   `
 }

@@ -374,26 +374,15 @@ body {
   position: fixed;
   bottom: 10px;
   right: 10px;
-  background: rgba(0, 0, 0, 0.95);
-  border: 2px solid var(--accent-color);
-  font-size: 13px;
-  z-index: 999;
-  font-family: 'Courier New', monospace;
-  transition: all 0.3s;
-}
-
-.guide-panel:not(.expanded) {
-  padding: 10px 15px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.guide-panel.expanded {
   width: 400px;
   max-height: 70vh;
   overflow-y: auto;
+  background: rgba(0, 0, 0, 0.95);
+  border: 2px solid var(--accent-color);
   padding: 20px;
+  font-size: 13px;
+  z-index: 999;
+  font-family: 'Courier New', monospace;
 }
 
 .guide-toggle {
@@ -416,12 +405,6 @@ body {
 .guide-toggle:hover {
   background: var(--accent-color);
   color: var(--bg-color);
-}
-
-.guide-summary {
-  color: var(--text-color);
-  font-size: 12px;
-  opacity: 0.8;
 }
 
 .guide-panel h3 {
