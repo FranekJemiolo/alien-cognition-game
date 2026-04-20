@@ -93,5 +93,12 @@ function applyShift(sequence: SymbolId[], amount: number): SymbolId[] {
 export function computeNext(sequence: SymbolId[], rules: Rule[], params: RuleParams): SymbolId[] {
   // Simple prediction: apply rules to current sequence and get next position
   const extended = applyRules([...sequence, ...sequence.slice(0, 3)], rules, params)
+  
+  // Ensure we have a valid answer
+  if (extended.length <= sequence.length || extended[sequence.length] === undefined) {
+    // Fallback: return last symbol of sequence
+    return [sequence[sequence.length - 1]]
+  }
+  
   return [extended[sequence.length]]
 }

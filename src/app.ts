@@ -213,110 +213,124 @@ function generateNewPuzzle() {
 
 // Submit answer
 function submitAnswer() {
-  console.log('Submit answer called, selectedAnswer:', selectedAnswer)
-  const correct = validateAnswer(currentPuzzle, [selectedAnswer!])
-  console.log('Answer correct:', correct)
-  isCorrect = correct
-  showFeedback = true
+  try {
+    console.log('Submit answer called, selectedAnswer:', selectedAnswer)
+    const correct = validateAnswer(currentPuzzle, [selectedAnswer!])
+    console.log('Answer correct:', correct)
+    isCorrect = correct
+    showFeedback = true
 
-  // Update beliefs (use current puzzleIndex before increment)
-  state.beliefs = updateBeliefs(
-    state.beliefs,
-    correct,
-    currentPuzzle.realRules,
-    seededRng(state.seed + state.puzzleIndex)
-  )
+    // Update beliefs (use current puzzleIndex before increment)
+    state.beliefs = updateBeliefs(
+      state.beliefs,
+      correct,
+      currentPuzzle.realRules,
+      seededRng(state.seed + state.puzzleIndex)
+    )
 
-  // Increment puzzleIndex after using it
-  state.puzzleIndex++
-  console.log('puzzleIndex incremented to:', state.puzzleIndex)
+    // Increment puzzleIndex after using it
+    state.puzzleIndex++
+    console.log('puzzleIndex incremented to:', state.puzzleIndex)
 
-  // Update hallucination level
-  state.hallucinationLevel = 1 - (state.streak.stability / 10)
+    // Update hallucination level
+    state.hallucinationLevel = 1 - (state.streak.stability / 10)
 
-  // Generate hallucinations (use puzzleIndex - 1 since we just incremented)
-  state.hallucinations = generateHallucinations(
-    state.seed,
-    state.puzzleIndex - 1,
-    state.streak,
-    state.hallucinationLevel
-  )
-  state.hallucinations = clampHallucinationsForMobile(state.hallucinations)
+    // Generate hallucinations (use puzzleIndex - 1 since we just incremented)
+    state.hallucinations = generateHallucinations(
+      state.seed,
+      state.puzzleIndex - 1,
+      state.streak,
+      state.hallucinationLevel
+    )
+    state.hallucinations = clampHallucinationsForMobile(state.hallucinations)
 
-  // Update streak
-  state.streak = updateStreak(state.streak, correct, state.hallucinationLevel)
+    // Update streak
+    state.streak = updateStreak(state.streak, correct, state.hallucinationLevel)
 
-  // Calculate score
-  const scoreBreakdown = calculateScore(
-    correct,
-    state.beliefs,
-    1,
-    state.hallucinationLevel,
-    state.streak
-  )
-  state.score += scoreBreakdown.total
+    // Calculate score
+    const scoreBreakdown = calculateScore(
+      correct,
+      state.beliefs,
+      1,
+      state.hallucinationLevel,
+      state.streak
+    )
+    state.score += scoreBreakdown.total
 
-  // Play audio
-  if (state.audioEnabled) {
-    if (correct) {
-      playStepPulse(audioEngine, state.puzzleIndex, 1)
-    } else {
-      playHallucination(audioEngine, state.hallucinationLevel)
+    // Play audio
+    if (state.audioEnabled) {
+      if (correct) {
+        playStepPulse(audioEngine, state.puzzleIndex, 1)
+      } else {
+        playHallucination(audioEngine, state.hallucinationLevel)
+      }
+      playBeliefState(audioEngine, state.beliefs)
+      updateMix(audioEngine, state.beliefs, state.hallucinationLevel)
     }
-    playBeliefState(audioEngine, state.beliefs)
-    updateMix(audioEngine, state.beliefs, state.hallucinationLevel)
-  }
 
-  // Record frame
-  replayFrames.push(recordFrame(
-    state.puzzleIndex,
-    currentPuzzle.sequence,
-    state.beliefs,
-    state.hallucinations,
-    {
-      type: correct ? 'STEP' : 'HALLUCINATION',
-      intensity: state.hallucinationLevel
-    }
-  ))
-  
-  updateURL()
+    // Record frame
+    replayFrames.push(recordFrame(
+      state.puzzleIndex,
+      currentPuzzle.sequence,
+      state.beliefs,
+      state.hallucinations,
+      {
+        type: correct ? 'STEP' : 'HALLUCINATION',
+        intensity: state.hallucinationLevel
+      }
+    ))
+    
+    updateURL()
 
-  render()
+    render()
 
-  // Auto-advance after delay
-  setTimeout(() => {
-    console.log('Auto-advance timeout, correct:', correct, 'puzzleIndex:', state.puzzleIndex)
-    if (correct) {
-      // Check if level complete (5 puzzles per level)
-      // puzzleIndex was already incremented, so check if it's >= 5
-      if (state.puzzleIndex >= 5) {
-        console.log('Level complete, advancing to level', state.level + 1)
-        state.level++
-        state.puzzleIndex = 0
-        updateURL()
-        if (state.level >= 5) {
-          console.log('Game complete, transitioning to END')
-          startTransition(state, 'END')
-          animateTransition()
+    // Auto-advance after delay
+    setTimeout(() => {
+      try {
+        console.log('Auto-advance timeout, correct:', correct, 'puzzleIndex:', state.puzzleIndex)
+        if (correct) {
+          // Check if level complete (5 puzzles per level)
+          // puzzleIndex was already incremented, so check if it's >= 5
+          if (state.puzzleIndex >= 5) {
+            console.log('Level complete, advancing to level', state.level + 1)
+            state.level++
+            state.puzzleIndex = 0
+            updateURL()
+            if (state.level >= 5) {
+              console.log('Game complete, transitioning to END')
+              startTransition(state, 'END')
+              animateTransition()
+            } else {
+              console.log('Generating new puzzle for next level')
+              generateNewPuzzle()
+              render()
+            }
+          } else {
+            console.log('Generating next puzzle in current level')
+            generateNewPuzzle()
+            render()
+          }
         } else {
-          console.log('Generating new puzzle for next level')
+          // Reset streak on wrong answer
+          state.streak.correct = 0
+          updateURL()
+          console.log('Wrong answer, resetting streak and generating new puzzle')
           generateNewPuzzle()
           render()
         }
-      } else {
-        console.log('Generating next puzzle in current level')
+      } catch (error) {
+        console.error('Error in auto-advance:', error)
+        // Try to generate a new puzzle anyway
         generateNewPuzzle()
         render()
       }
-    } else {
-      // Reset streak on wrong answer
-      state.streak.correct = 0
-      updateURL()
-      console.log('Wrong answer, resetting streak and generating new puzzle')
-      generateNewPuzzle()
-      render()
-    }
-  }, 1500)
+    }, 1500)
+  } catch (error) {
+    console.error('Error in submitAnswer:', error)
+    // Reset and try to continue
+    generateNewPuzzle()
+    render()
+  }
 }
 
 // Share run
