@@ -222,7 +222,14 @@ function generateNewPuzzle() {
 function submitAnswer() {
   try {
     console.log('Submit answer called, selectedAnswer:', selectedAnswer)
-    const correct = validateAnswer(currentPuzzle, [selectedAnswer!])
+    
+    // Validate selectedAnswer before processing
+    if (!selectedAnswer) {
+      console.error('No answer selected')
+      return
+    }
+    
+    const correct = validateAnswer(currentPuzzle, [selectedAnswer])
     console.log('Answer correct:', correct)
     isCorrect = correct
     showFeedback = true

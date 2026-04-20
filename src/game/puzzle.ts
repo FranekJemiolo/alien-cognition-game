@@ -34,15 +34,23 @@ export function generatePuzzle(seed: number, level: number, puzzleIndex: number)
     // Apply rules to get sequence
     const sequence = interpretRules(base, realRules, params)
 
+    // Validate sequence has no undefined symbols
+    const validSequence = sequence.filter(s => s && SYMBOLS.includes(s))
+    console.log('Original sequence:', sequence, 'Validated sequence:', validSequence)
+
     // Compute answer
-    const answer = computeNext(sequence, realRules, params)
+    const answer = computeNext(validSequence, realRules, params)
+
+    // Validate answer is a valid symbol
+    const validAnswer = answer[0] && SYMBOLS.includes(answer[0]) ? answer[0] : validSequence[validSequence.length - 1]
+    console.log('Computed answer:', answer[0], 'Validated answer:', validAnswer)
 
     // Generate choices (include correct answer + distractors)
-    const choices = generateChoices(answer[0], phaseRng)
+    const choices = generateChoices(validAnswer, phaseRng)
 
     return {
-      sequence,
-      answer,
+      sequence: validSequence,
+      answer: [validAnswer],
       choices,
       realRules,
       params,
@@ -68,17 +76,35 @@ function generateChoices(correct: SymbolId, rng: () => number): SymbolId[] {
   
   while (choices.length < 4) {
     const random = SYMBOLS[Math.floor(rng() * SYMBOLS.length)]
-    if (!choices.includes(random)) {
+    if (random && !choices.includes(random)) {
       choices.push(random)
     }
   }
 
+  // Filter out any undefined and ensure we have 4 choices
+  const validChoices = choices.filter(c => c && SYMBOLS.includes(c))
+  while (validChoices.length < 4) {
+    const random = SYMBOLS[Math.floor(rng() * SYMBOLS.length)]
+    if (random && !validChoices.includes(random)) {
+      validChoices.push(random)
+    }
+  }
+
   // Shuffle
-  return choices.sort(() => rng() - 0.5)
+  return validChoices.sort(() => rng() - 0.5)
 }
 
 // Validate answer
 export function validateAnswer(puzzle: Puzzle, playerAnswer: SymbolId[]): boolean {
+  if (!playerAnswer || playerAnswer.length === 0) return false
+  if (!puzzle.answer || puzzle.answer.length === 0) return false
   if (playerAnswer.length !== puzzle.answer.length) return false
-  return playerAnswer.every((a, i) => a === puzzle.answer[i])
+  
+  // Filter out undefined values
+  const validPlayerAnswer = playerAnswer.filter(a => a && SYMBOLS.includes(a))
+  const validPuzzleAnswer = puzzle.answer.filter(a => a && SYMBOLS.includes(a))
+  
+  if (validPlayerAnswer.length === 0 || validPuzzleAnswer.length === 0) return false
+  
+  return validPlayerAnswer.every((a, i) => a === validPuzzleAnswer[i])
 }
