@@ -1,0 +1,260 @@
+:root {
+  --bg-color: #0a0a0f;
+  --text-color: #7cffb2;
+  --accent-color: #7cffb2;
+  --error-color: #ff6b6b;
+  --panel-bg: rgba(10, 10, 15, 0.95);
+  --border-color: rgba(124, 255, 178, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Courier New', monospace;
+  background: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+#app {
+  min-height: 100vh;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.screen {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.panel {
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  padding: 30px;
+  margin: 20px 0;
+}
+
+.title {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  opacity: 0.8;
+}
+
+.btn-primary {
+  background: transparent;
+  border: 2px solid var(--accent-color);
+  color: var(--accent-color);
+  padding: 15px 30px;
+  font-family: inherit;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--accent-color);
+  color: var(--bg-color);
+}
+
+.btn-primary:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 12px 24px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent-color);
+}
+
+.btn-large {
+  font-size: 1.2rem;
+  padding: 20px 40px;
+}
+
+/* Glyph styles */
+.glyph {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  font-size: 1.5rem;
+  margin: 5px;
+  border: 1px solid var(--border-color);
+  background: rgba(124, 255, 178, 0.1);
+}
+
+.sequence {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 30px 0;
+}
+
+.sequence .glyph {
+  width: 60px;
+  height: 60px;
+  line-height: 60px;
+  font-size: 1.8rem;
+}
+
+.glyph.placeholder {
+  border-style: dashed;
+  opacity: 0.5;
+}
+
+/* Puzzle styles */
+.choices-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin: 30px 0;
+}
+
+.choice-btn {
+  background: transparent;
+  border: 2px solid var(--border-color);
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.choice-btn:hover {
+  border-color: var(--accent-color);
+}
+
+.choice-btn.selected {
+  border-color: var(--accent-color);
+  background: rgba(124, 255, 178, 0.2);
+}
+
+.feedback {
+  text-align: center;
+  padding: 15px;
+  margin: 20px 0;
+  border: 1px solid;
+}
+
+.feedback.correct {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.feedback.incorrect {
+  border-color: var(--error-color);
+  color: var(--error-color);
+}
+
+/* Replay styles */
+.replay-panel {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.replay-info {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.replay-sequence {
+  margin: 20px 0;
+}
+
+.beliefs-display {
+  margin: 20px 0;
+}
+
+.belief-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.replay-controls {
+  margin-top: 30px;
+}
+
+.scrubber {
+  width: 100%;
+  margin: 20px 0;
+}
+
+.control-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Transition styles */
+.transition-container {
+  position: relative;
+  width: 100%;
+  min-height: 80vh;
+}
+
+.transition-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+}
+
+/* Distortion effects */
+.distorted {
+  transition: transform 0.3s, filter 0.3s;
+}
+
+.distorted.blur {
+  filter: blur(3px);
+}
+
+.distorted.shift {
+  transform: translateX(10px);
+}
+
+.distorted.invert {
+  filter: invert(0.3);
+}
+
+.distorted.glitch {
+  animation: glitch 0.3s infinite;
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
