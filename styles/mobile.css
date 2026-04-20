@@ -131,4 +131,17 @@
   .symbol-legend {
     grid-template-columns: repeat(2, 1fr);
   }
+
+  /* Toggle buttons mobile */
+  .toggle-buttons {
+    top: auto;
+    bottom: 10px;
+    left: 10px;
+  }
+
+  .toggle-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
 }

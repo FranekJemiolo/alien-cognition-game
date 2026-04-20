@@ -63,10 +63,12 @@ export function init() {
   window.addEventListener('keydown', (e) => {
     if (e.key === 'd' || e.key === 'D') {
       showDebug = !showDebug
+      console.log('Debug panel:', showDebug ? 'ON' : 'OFF')
       render()
     }
     if (e.key === 'h' || e.key === 'H') {
       showGuide = !showGuide
+      console.log('Guide panel:', showGuide ? 'ON' : 'OFF')
       render()
     }
   })
@@ -98,12 +100,15 @@ function render() {
 
   app.innerHTML = html
 
+  // Remove existing panels
+  document.querySelectorAll('.debug-panel, .guide-panel').forEach(el => el.remove())
+
   // Add debug UI if enabled
   if (showDebug) {
     const debugPanel = document.createElement('div')
     debugPanel.className = 'debug-panel'
     debugPanel.innerHTML = renderDebugUI()
-    app.appendChild(debugPanel)
+    document.body.appendChild(debugPanel)
   }
 
   // Add guide panel if enabled
@@ -111,8 +116,29 @@ function render() {
     const guidePanel = document.createElement('div')
     guidePanel.className = 'guide-panel'
     guidePanel.innerHTML = renderGuideUI()
-    app.appendChild(guidePanel)
+    document.body.appendChild(guidePanel)
   }
+
+  // Add toggle buttons
+  const toggleButtons = document.createElement('div')
+  toggleButtons.className = 'toggle-buttons'
+  toggleButtons.innerHTML = `
+    <button id="toggle-debug" class="toggle-btn ${showDebug ? 'active' : ''}" title="Toggle Debug (D)">D</button>
+    <button id="toggle-guide" class="toggle-btn ${showGuide ? 'active' : ''}" title="Toggle Guide (H)">H</button>
+  `
+  document.body.appendChild(toggleButtons)
+
+  // Bind toggle buttons
+  document.getElementById('toggle-debug')?.addEventListener('click', () => {
+    showDebug = !showDebug
+    console.log('Debug panel:', showDebug ? 'ON' : 'OFF')
+    render()
+  })
+  document.getElementById('toggle-guide')?.addEventListener('click', () => {
+    showGuide = !showGuide
+    console.log('Guide panel:', showGuide ? 'ON' : 'OFF')
+    render()
+  })
 
   // Bind event handlers
   bindHandlers()
