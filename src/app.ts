@@ -28,7 +28,6 @@ let showFeedback = false
 let isCorrect = false
 let replayFrames: any[] = []
 let showDebug = false
-let showGuide = true
 
 // Initialize app
 export function init() {
@@ -64,11 +63,6 @@ export function init() {
     if (e.key === 'd' || e.key === 'D') {
       showDebug = !showDebug
       console.log('Debug panel:', showDebug ? 'ON' : 'OFF')
-      render()
-    }
-    if (e.key === 'h' || e.key === 'H') {
-      showGuide = !showGuide
-      console.log('Guide panel:', showGuide ? 'ON' : 'OFF')
       render()
     }
   })
@@ -111,32 +105,24 @@ function render() {
     document.body.appendChild(debugPanel)
   }
 
-  // Add guide panel if enabled
-  if (showGuide) {
-    const guidePanel = document.createElement('div')
-    guidePanel.className = 'guide-panel'
-    guidePanel.innerHTML = renderGuideUI()
-    document.body.appendChild(guidePanel)
-  }
+  // Always show guide panel
+  const guidePanel = document.createElement('div')
+  guidePanel.className = 'guide-panel'
+  guidePanel.innerHTML = renderGuideUI()
+  document.body.appendChild(guidePanel)
 
-  // Add toggle buttons
+  // Add toggle button for debug only
   const toggleButtons = document.createElement('div')
   toggleButtons.className = 'toggle-buttons'
   toggleButtons.innerHTML = `
     <button id="toggle-debug" class="toggle-btn ${showDebug ? 'active' : ''}" title="Toggle Debug (D)">D</button>
-    <button id="toggle-guide" class="toggle-btn ${showGuide ? 'active' : ''}" title="Toggle Guide (H)">H</button>
   `
   document.body.appendChild(toggleButtons)
 
-  // Bind toggle buttons
+  // Bind toggle button
   document.getElementById('toggle-debug')?.addEventListener('click', () => {
     showDebug = !showDebug
     console.log('Debug panel:', showDebug ? 'ON' : 'OFF')
-    render()
-  })
-  document.getElementById('toggle-guide')?.addEventListener('click', () => {
-    showGuide = !showGuide
-    console.log('Guide panel:', showGuide ? 'ON' : 'OFF')
     render()
   })
 
@@ -396,7 +382,7 @@ function renderDebugUI(): string {
 function renderGuideUI(): string {
   return `
     <div class="guide-panel">
-      <h3>GUIDE (Press H to toggle)</h3>
+      <h3>GUIDE</h3>
       
       <div class="guide-section">
         <h4>How to Play</h4>
@@ -451,7 +437,6 @@ function renderGuideUI(): string {
       <div class="guide-section">
         <h4>Keyboard Shortcuts</h4>
         <p><strong>D</strong> - Toggle debug panel</p>
-        <p><strong>H</strong> - Toggle this guide</p>
       </div>
     </div>
   `
