@@ -393,13 +393,13 @@ function renderGuideUI(): string {
       <div class="guide-section">
         <h4>Symbols</h4>
         <div class="symbol-legend">
-          <div><span class="glyph TRI"></span> Triangle</div>
-          <div><span class="glyph CIRC"></span> Circle</div>
-          <div><span class="glyph SQR"></span> Square</div>
-          <div><span class="glyph DIAM"></span> Diamond</div>
-          <div><span class="glyph STAR"></span> Star</div>
-          <div><span class="glyph AR_L"></span> Left Arrow</div>
-          <div><span class="glyph AR_R"></span> Right Arrow</div>
+          <div><span class="glyph TRI">▲</span> Triangle</div>
+          <div><span class="glyph CIRC">●</span> Circle</div>
+          <div><span class="glyph SQR">■</span> Square</div>
+          <div><span class="glyph DIAM">◆</span> Diamond</div>
+          <div><span class="glyph STAR">★</span> Star</div>
+          <div><span class="glyph AR_L">←</span> Left Arrow</div>
+          <div><span class="glyph AR_R">→</span> Right Arrow</div>
         </div>
       </div>
 
