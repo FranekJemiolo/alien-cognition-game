@@ -28,6 +28,7 @@ let showFeedback = false
 let isCorrect = false
 let replayFrames: any[] = []
 let showDebug = false
+let guideExpanded = false
 
 // Initialize app
 export function init() {
@@ -107,9 +108,15 @@ function render() {
 
   // Always show guide panel
   const guidePanel = document.createElement('div')
-  guidePanel.className = 'guide-panel'
+  guidePanel.className = `guide-panel ${guideExpanded ? 'expanded' : ''}`
   guidePanel.innerHTML = renderGuideUI()
   document.body.appendChild(guidePanel)
+
+  // Bind guide expand/collapse
+  guidePanel.querySelector('.guide-toggle')?.addEventListener('click', () => {
+    guideExpanded = !guideExpanded
+    render()
+  })
 
   // Add toggle button for debug only
   const toggleButtons = document.createElement('div')
@@ -186,7 +193,6 @@ function generateNewPuzzle() {
   selectedAnswer = null
   showFeedback = false
   isCorrect = false
-  state.puzzleIndex++
   updateURL()
 }
 
@@ -196,7 +202,7 @@ function submitAnswer() {
   isCorrect = correct
   showFeedback = true
 
-  // Update beliefs
+  // Update beliefs (use current puzzleIndex before increment)
   state.beliefs = updateBeliefs(
     state.beliefs,
     correct,
@@ -204,13 +210,16 @@ function submitAnswer() {
     seededRng(state.seed + state.puzzleIndex)
   )
 
+  // Increment puzzleIndex after using it
+  state.puzzleIndex++
+
   // Update hallucination level
   state.hallucinationLevel = 1 - (state.streak.stability / 10)
 
-  // Generate hallucinations
+  // Generate hallucinations (use puzzleIndex - 1 since we just incremented)
   state.hallucinations = generateHallucinations(
     state.seed,
-    state.puzzleIndex,
+    state.puzzleIndex - 1,
     state.streak,
     state.hallucinationLevel
   )
@@ -380,8 +389,20 @@ function renderDebugUI(): string {
 
 // Render guide UI
 function renderGuideUI(): string {
+  if (!guideExpanded) {
+    return `
+      <div class="guide-panel">
+        <button class="guide-toggle">?</button>
+        <div class="guide-summary">
+          <span>Decode the alien language</span>
+        </div>
+      </div>
+    `
+  }
+
   return `
-    <div class="guide-panel">
+    <div class="guide-panel expanded">
+      <button class="guide-toggle">✕</button>
       <h3>GUIDE</h3>
       
       <div class="guide-section">

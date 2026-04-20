@@ -116,8 +116,11 @@
     right: 10px;
     left: 10px;
     bottom: 10px;
-    max-height: 50vh;
     font-size: 12px;
+  }
+
+  .guide-panel.expanded {
+    max-height: 50vh;
   }
 
   .guide-panel h3 {
