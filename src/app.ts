@@ -21,7 +21,7 @@ import { SymbolId } from './rules/registry.js'
 
 // Main app state
 let state: AppState
-let audioEngine: AudioEngine
+let audioEngine: AudioEngine | null = null
 let currentPuzzle: any = null
 let selectedAnswer: SymbolId | null = null
 let showFeedback = false
@@ -29,6 +29,7 @@ let isCorrect = false
 let replayFrames: any[] = []
 let showDebug = false
 let guideExpanded = false
+let isUpdatingURL = false
 
 // Initialize app
 export function init() {
@@ -44,14 +45,20 @@ export function init() {
   }
 
   // Initialize audio
-  audioEngine = new AudioEngine()
-  initAudioAutoResume(audioEngine)
+  try {
+    audioEngine = new AudioEngine()
+    initAudioAutoResume(audioEngine)
+  } catch (error) {
+    console.error('Audio initialization failed:', error)
+    state.audioEnabled = false
+  }
 
   // Render initial screen
   render()
 
   // Setup URL sync
   window.addEventListener('hashchange', () => {
+    if (isUpdatingURL) return
     const urlState = decodeState(window.location.hash)
     if (urlState.seed) {
       Object.assign(state, urlState)
@@ -258,14 +265,20 @@ function submitAnswer() {
     state.score += scoreBreakdown.total
 
     // Play audio
-    if (state.audioEnabled) {
-      if (correct) {
-        playStepPulse(audioEngine, state.puzzleIndex, 1)
-      } else {
-        playHallucination(audioEngine, state.hallucinationLevel)
+    if (state.audioEnabled && audioEngine) {
+      try {
+        if (correct) {
+          playStepPulse(audioEngine, state.puzzleIndex, 1)
+        } else {
+          playHallucination(audioEngine, state.hallucinationLevel)
+        }
+        playBeliefState(audioEngine, state.beliefs)
+        updateMix(audioEngine, state.beliefs, state.hallucinationLevel)
+      } catch (error) {
+        console.error('Audio error:', error)
+        // Disable audio if it fails
+        state.audioEnabled = false
       }
-      playBeliefState(audioEngine, state.beliefs)
-      updateMix(audioEngine, state.beliefs, state.hallucinationLevel)
     }
 
     // Record frame
@@ -346,13 +359,21 @@ function restart() {
   const newSeed = Math.floor(Math.random() * 1000000)
   state = createInitialState(newSeed)
   replayFrames = []
+  isUpdatingURL = true
   window.location.hash = encodeState(state)
+  setTimeout(() => {
+    isUpdatingURL = false
+  }, 0)
   render()
 }
 
 // Update URL hash with current state
 function updateURL() {
+  isUpdatingURL = true
   window.location.hash = encodeState(state)
+  setTimeout(() => {
+    isUpdatingURL = false
+  }, 0)
 }
 
 // Render debug UI
