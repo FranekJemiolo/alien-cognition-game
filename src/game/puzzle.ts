@@ -24,8 +24,8 @@ export function generatePuzzle(seed: number, level: number, puzzleIndex: number)
     const realRules = pickRules(phaseRng, phase, [])
     const params = generateRuleParams(realRules, phaseRng)
 
-    // Generate base pattern
-    const baseLength = 2 + Math.floor(phaseRng() * 2)
+    // Generate base pattern - longer sequences for more challenge
+    const baseLength = 3 + Math.floor(phaseRng() * 4) + Math.min(level, 3)
     const base: SymbolId[] = []
     for (let i = 0; i < baseLength; i++) {
       base.push(SYMBOLS[Math.floor(phaseRng() * SYMBOLS.length)])

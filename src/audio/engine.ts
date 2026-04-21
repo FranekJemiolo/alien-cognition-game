@@ -23,7 +23,7 @@ export class AudioEngine {
     this.hallucinationBus.connect(this.master)
     this.master.connect(this.ctx.destination)
 
-    this.master.gain.value = 0.6
+    this.master.gain.value = 0.25
   }
 
   // Initialize audio context (must be user-triggered)
