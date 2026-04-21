@@ -78,6 +78,11 @@ export function init() {
       console.log('Guide panel:', guideExpanded ? 'ON' : 'OFF')
       render()
     }
+    if (e.key === 'm' || e.key === 'M') {
+      state.audioEnabled = !state.audioEnabled
+      console.log('Audio:', state.audioEnabled ? 'ON' : 'OFF')
+      render()
+    }
   })
 }
 
@@ -138,6 +143,7 @@ function render() {
   toggleButtons.innerHTML = `
     <button id="toggle-debug" class="toggle-btn ${showDebug ? 'active' : ''}" title="Toggle Debug (D)">D</button>
     <button id="toggle-guide" class="toggle-btn ${guideExpanded ? 'active' : ''}" title="Toggle Guide (H)">H</button>
+    <button id="toggle-audio" class="toggle-btn ${state.audioEnabled ? 'active' : ''}" title="Toggle Audio (M)">M</button>
   `
   document.body.appendChild(toggleButtons)
 
@@ -150,6 +156,11 @@ function render() {
   document.getElementById('toggle-guide')?.addEventListener('click', () => {
     guideExpanded = !guideExpanded
     console.log('Guide panel:', guideExpanded ? 'ON' : 'OFF')
+    render()
+  })
+  document.getElementById('toggle-audio')?.addEventListener('click', () => {
+    state.audioEnabled = !state.audioEnabled
+    console.log('Audio:', state.audioEnabled ? 'ON' : 'OFF')
     render()
   })
 
@@ -513,6 +524,7 @@ function renderGuideUI(): string {
       <h4>Keyboard Shortcuts</h4>
       <p><strong>D</strong> - Toggle debug panel</p>
       <p><strong>H</strong> - Toggle this guide</p>
+      <p><strong>M</strong> - Toggle audio mute</p>
     </div>
   `
 }
