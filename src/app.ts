@@ -39,6 +39,18 @@ export function init() {
   if (urlState.seed) {
     state = createInitialState(urlState.seed)
     Object.assign(state, urlState)
+    
+    // Validate puzzleIndex is within reasonable bounds
+    if (state.puzzleIndex > 100) {
+      console.warn('puzzleIndex too high, resetting to 0')
+      state.puzzleIndex = 0
+    }
+    
+    // Validate level is within reasonable bounds
+    if (state.level > 20) {
+      console.warn('level too high, resetting to 0')
+      state.level = 0
+    }
   } else {
     const seed = Math.floor(Math.random() * 1000000)
     state = createInitialState(seed)
@@ -101,6 +113,10 @@ function render() {
       html = renderMapScreen(state)
       break
     case 'PUZZLE':
+      if (!currentPuzzle) {
+        console.error('No current puzzle, generating fallback')
+        generateNewPuzzle()
+      }
       html = renderPuzzleScreen(currentPuzzle, selectedAnswer, showFeedback, isCorrect)
       break
     case 'END':
@@ -221,8 +237,21 @@ function animateTransition() {
 // Generate new puzzle
 function generateNewPuzzle() {
   console.log('Generating puzzle: level:', state.level, 'puzzleIndex:', state.puzzleIndex)
-  currentPuzzle = generatePuzzle(state.seed, state.level, state.puzzleIndex)
-  console.log('Puzzle generated:', currentPuzzle)
+  try {
+    currentPuzzle = generatePuzzle(state.seed, state.level, state.puzzleIndex)
+    console.log('Puzzle generated:', currentPuzzle)
+  } catch (error) {
+    console.error('Error generating puzzle, creating fallback:', error)
+    // Create fallback puzzle
+    currentPuzzle = {
+      sequence: ['TRI', 'CIRC', 'SQR'],
+      answer: ['TRI'],
+      choices: ['TRI', 'CIRC', 'SQR', 'DIAM'],
+      realRules: [],
+      params: {},
+      level: state.level
+    }
+  }
   selectedAnswer = null
   showFeedback = false
   isCorrect = false
