@@ -35,23 +35,33 @@ let isUpdatingURL = false
 export function init() {
   // Parse URL state or create new
   const urlState = decodeState(window.location.hash)
+  console.log('URL state decoded:', urlState)
   
   if (urlState.seed) {
     state = createInitialState(urlState.seed)
     Object.assign(state, urlState)
     
     // Validate puzzleIndex is within reasonable bounds
-    if (state.puzzleIndex > 100) {
-      console.warn('puzzleIndex too high, resetting to 0')
+    if (isNaN(state.puzzleIndex) || state.puzzleIndex < 0 || state.puzzleIndex > 100) {
+      console.warn('Invalid puzzleIndex:', state.puzzleIndex, ', resetting to 0')
       state.puzzleIndex = 0
     }
     
     // Validate level is within reasonable bounds
-    if (state.level > 20) {
-      console.warn('level too high, resetting to 0')
+    if (isNaN(state.level) || state.level < 0 || state.level > 20) {
+      console.warn('Invalid level:', state.level, ', resetting to 0')
       state.level = 0
     }
+    
+    // Validate score
+    if (isNaN(state.score) || state.score < 0) {
+      console.warn('Invalid score:', state.score, ', resetting to 0')
+      state.score = 0
+    }
+    
+    console.log('Final state after validation:', state)
   } else {
+    console.warn('Invalid URL state, creating new game')
     const seed = Math.floor(Math.random() * 1000000)
     state = createInitialState(seed)
   }

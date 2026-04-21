@@ -60,11 +60,34 @@ export function decodeState(hash: string): Partial<AppState> {
   const streak = decodeStreaks(parts[5])
   const isReplay = parts.includes("replay")
   
+  console.log('Decoded values:', { seed, beliefsBits, level, puzzleIndex, score, streak })
+  
   // Validate all values
-  if (isNaN(seed) || seed < 0) return {}
-  if (isNaN(level) || level < 0) return {}
-  if (isNaN(puzzleIndex) || puzzleIndex < 0) return {}
-  if (isNaN(score) || score < 0) return {}
+  if (isNaN(seed) || seed < 0) {
+    console.warn('Invalid seed:', seed)
+    return {}
+  }
+  if (isNaN(level) || level < 0) {
+    console.warn('Invalid level:', level)
+    return {}
+  }
+  if (isNaN(puzzleIndex) || puzzleIndex < 0) {
+    console.warn('Invalid puzzleIndex:', puzzleIndex)
+    return {}
+  }
+  if (isNaN(score) || score < 0) {
+    console.warn('Invalid score:', score)
+    return {}
+  }
+  
+  // Validate streak values
+  if (isNaN(streak.correct) || streak.correct < 0 ||
+      isNaN(streak.stability) || streak.stability < 0 ||
+      isNaN(streak.perception) || streak.perception < 0 ||
+      isNaN(streak.bestCorrect) || streak.bestCorrect < 0) {
+    console.warn('Invalid streak:', streak)
+    return {}
+  }
   
   return {
     seed,
