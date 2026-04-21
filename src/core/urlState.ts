@@ -13,11 +13,17 @@ export function encodeStreaks(streak: Streak): string {
 
 // Decode streaks from base36 tuple
 export function decodeStreaks(str: string): Streak {
-  const [c, s, p, b] = str.split(".")
+  console.log('decodeStreaks called with:', str)
+  const parts = str.split(".")
+  console.log('Streak parts:', parts)
+  
+  const [c, s, p, b] = parts
   const correct = parseBase36(c)
   const stability = parseBase36(s)
   const perception = parseBase36(p)
   const bestCorrect = parseBase36(b)
+  
+  console.log('Parsed streak values:', { correct, stability, perception, bestCorrect })
   
   // Validate values
   return {
@@ -50,6 +56,9 @@ export function decodeState(hash: string): Partial<AppState> {
   const clean = hash.replace("#", "")
   const parts = clean.split(".")
   
+  console.log('URL parts:', parts)
+  console.log('Number of parts:', parts.length)
+  
   if (parts.length < 6) return {}
   
   const seed = parseBase36(parts[0])
@@ -60,7 +69,7 @@ export function decodeState(hash: string): Partial<AppState> {
   const streak = decodeStreaks(parts[5])
   const isReplay = parts.includes("replay")
   
-  console.log('Decoded values:', { seed, beliefsBits, level, puzzleIndex, score, streak })
+  console.log('Decoded values:', { seed, beliefsBits, level, puzzleIndex, score, streak, isReplay })
   
   // Validate all values
   if (isNaN(seed) || seed < 0) {
