@@ -26,6 +26,64 @@ You are decoding an unknown symbolic language. Each puzzle is an inscription. Th
 - **Audio**: Multi-bus WebAudio engine (signal, belief, hallucination buses)
 - **Replay**: Frame recording and deterministic playback
 
+### Architecture Diagram
+
+```mermaid
+graph TD
+    A[Browser URL] --> B[URL State Decoder]
+    B --> C[App State Manager]
+    C --> D[Game Engine]
+    
+    D --> E[Puzzle Generator]
+    D --> F[Rules Registry]
+    D --> G[Cognition System]
+    D --> H[Audio Engine]
+    D --> I[Replay System]
+    D --> J[UI Renderer]
+    
+    E --> K[Seed RNG]
+    F --> L[Transformation Rules]
+    G --> M[Belief Tracker]
+    G --> N[Hallucination Generator]
+    G --> O[Streak Manager]
+    H --> P[Signal Bus]
+    H --> Q[Belief Bus]
+    H --> R[Hallucination Bus]
+    I --> S[Frame Recorder]
+    I --> T[Playback Engine]
+    J --> U[Screen Manager]
+    
+    M --> V[Cognitive Coherence]
+    N --> W[UI Distortion]
+    O --> X[Score Multiplier]
+    
+    C --> Y[URL State Encoder]
+    Y --> A
+    
+    subgraph "Game Screens"
+        U --> AA[Boot Screen]
+        U --> BB[Map Screen]
+        U --> CC[Puzzle Screen]
+        U --> DD[End Screen]
+    end
+    
+    subgraph "Audio Components"
+        P --> EE[Step Pulse]
+        Q --> FF[Belief State]
+        R --> GG[Hallucination Audio]
+    end
+    
+    subgraph "Rule Types"
+        L --> HH[REPEAT_N]
+        L --> II[ALTERNATION]
+        L --> JJ[SHIFT]
+        L --> KK[REVERSE]
+        L --> LL[DUPLICATE]
+        L --> MM[IGNORE_SYMBOL]
+        L --> NN[DIRECTION_FLIP]
+    end
+```
+
 ### Game Loop
 1. Generate puzzle from seed + level + puzzle index
 2. Player selects answer from choices
