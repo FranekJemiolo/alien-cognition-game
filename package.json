@@ -1,7 +1,7 @@
 {
   "name": "alien-cognition-game",
   "version": "1.0.0",
-  "description": "A deterministic puzzle game about decoding an alien language with URL-encoded state and replayable cognition",
+  "description": "A puzzle game where you figure out alien symbols. Your progress saves in the URL, and the UI gets weird when you're doing poorly.",
   "type": "module",
   "scripts": {
     "dev": "vite",
